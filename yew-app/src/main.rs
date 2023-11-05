@@ -62,27 +62,39 @@ impl Component for App {
         let current_rack = &mut self.racks[self.rack];
         match action {
             GameAction{entity: Plyr::P1, action: Msg::Increment} => {
-                current_rack.player1 += 1;
+                if current_rack.player1 + current_rack.player2 + current_rack.dead < 10 {
+                    current_rack.player1 += 1;
+                }
                 return true;
             }
             GameAction{entity: Plyr::P1, action: Msg::Decrement} => {
-                current_rack.player1 -= 1;
+                if current_rack.player1 > 0 {
+                    current_rack.player1 -= 1;
+                }
                 return true;
             }
             GameAction{entity: Plyr::P2, action: Msg::Increment} => {
-                current_rack.player2 += 1;
+                if current_rack.player1 + current_rack.player2 + current_rack.dead < 10 {
+                    current_rack.player2 += 1;
+                }
                 return true;
             }
             GameAction{entity: Plyr::P2, action: Msg::Decrement} => {
-                current_rack.player2 -= 1;
+                if current_rack.player2 > 0 {
+                    current_rack.player2 -= 1;
+                }
                 return true;
             }
             GameAction{entity: Plyr::Dead, action: Msg::Increment} => {
-                current_rack.dead += 1;
+                if current_rack.player1 + current_rack.player2 + current_rack.dead < 10 {
+                    current_rack.dead += 1;
+                }
                 return true;
             }
             GameAction{entity: Plyr::Dead, action: Msg::Decrement} => {
-                current_rack.dead -= 1;
+                if current_rack.dead > 0 {
+                    current_rack.dead -= 1;
+                }
                 return true;
             }
             GameAction{entity: Plyr::Inning, action: Msg::Increment} => {
@@ -90,7 +102,9 @@ impl Component for App {
                 return true;
             }
             GameAction{entity: Plyr::Inning, action: Msg::Decrement} => {
-                current_rack.innings -= 1;
+                if current_rack.innings > 0 {
+                    current_rack.innings -= 1;
+                }
                 return true;
             }
             GameAction{entity: Plyr::Rack, action: Msg::Increment} => {
@@ -181,7 +195,7 @@ impl Component for App {
                             <td>{self.totals.player2}</td>
                         </tr>
                         <tr>
-                            <td>{format!("Rack {0}", self.rack)}</td>
+                            <td>{format!("Rack {0}", self.rack+1)}</td>
                             <td>{self.racks[self.rack].player1}</td>
                             <td>{self.racks[self.rack].innings}</td>
                             <td>{self.racks[self.rack].dead}</td>

@@ -2,16 +2,16 @@ button {
     background-color: #008f53; /* Green */
     border: 0;
     color: white;
-    padding: 4px 4px;
+    padding: 14px 14px;
     text-align: center;
-    font-size: 6px;
+    font-size: 24px;
     margin: 2px 2px;
-    width: 50px;
+    width: 150px;
   }
 
   .counter {
       color: #008f53;
-      font-size: 48px;
+      font-size: 60px;
       text-align: center;
   }
 
@@ -29,5 +29,11 @@ button {
   }
 
 table, th, td {
+  font-size: 24px;
   border:1px solid black;
+  padding: 10px;
+}
+
+td {
+  text-align: center;
 }
