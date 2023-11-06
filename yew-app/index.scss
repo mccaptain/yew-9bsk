@@ -21,11 +21,13 @@ button {
   }
 
   .button_panel {
-    float: left
+    float: left;
+    //display: table-cell;
   }
 
   .score_panel {
-    float: right
+    float: left;
+    //display: table-cell;
   }
 
 table, th, td {
@@ -36,4 +38,12 @@ table, th, td {
 
 td {
   text-align: center;
+  width:0.1%;
+  white-space: nowrap;
+}
+
+@media only screen and (orientation: landscape) {
+  table {
+    font-size: 12px;
+  }
 }
