@@ -7,8 +7,9 @@
         <link data-trunk rel="rust" />
         <link data-trunk rel="sass" href="./index.scss" />
         <link data-trunk rel="copy-file" href="./manifest.json">
+        <link data-trunk rel="copy-file" href="./service-worker.js">
         <link data-trunk rel="icon" href="./icon-256.png">
-
+        <link rel="manifest" href="./manifest.json">
         <script>
             // register ServiceWorker
             window.onload = () => {
@@ -16,7 +17,7 @@
 
                 if ('serviceWorker' in navigator) {
                     navigator.serviceWorker
-                        .register('service-worker.js');
+                        .register('./service-worker.js');
                 }
             }
         </script>
