@@ -113,8 +113,10 @@ impl Component for App {
                 return true;
             }
             GameAction{entity: Plyr::Rack, action: Msg::Decrement} => {
-                self.rack = cmp::max(0, self.rack -1);
-                self.totals = update_totals(&self.racks);
+                if self.rack > 0 {
+                    self.rack -= 1;
+                    self.totals = update_totals(&self.racks);
+                }
                 return true;
             }
             _ => { false }
@@ -124,60 +126,6 @@ impl Component for App {
     fn view(&self, ctx: &Context<Self>) -> Html {
         html! {
             <div>
-                <div class="button_panel">
-                    // A button to send the Increment message
-                    <div>
-                        <button class="button" onclick={ctx.link().callback(|_| GameAction{entity: Plyr::P1, action: Msg::Increment})}>
-                            { "+1 to P1" }
-                        </button>
-
-                        // A button to send the Decrement message
-                        <button onclick={ctx.link().callback(|_| GameAction{entity: Plyr::P1, action: Msg::Decrement})}>
-                            { "-1 to P1" }
-                        </button>
-                    </div>
-
-                    // A button to send the Increment message
-                    <div>
-                        <button class="button" onclick={ctx.link().callback(|_| GameAction{entity: Plyr::P2, action: Msg::Increment})}>
-                            { "+1 to P2" }
-                        </button>
-                        <button onclick={ctx.link().callback(|_| GameAction{entity: Plyr::P2, action: Msg::Decrement})}>
-                            { "-1 to P2" }
-                        </button>
-                    </div>
-
-                    // A button to send the Increment message
-                    <div>
-                        <button class="button" onclick={ctx.link().callback(|_| GameAction{entity: Plyr::Dead, action: Msg::Increment})}>
-                            { "+1 to Dead" }
-                        </button>
-                        <button onclick={ctx.link().callback(|_| GameAction{entity: Plyr::Dead, action: Msg::Decrement})}>
-                            { "-1 to Dead" }
-                        </button>
-                    </div>
-
-                    // A button to send the Increment message
-                    <div>
-                        <button class="button" onclick={ctx.link().callback(|_| GameAction{entity: Plyr::Inning, action: Msg::Increment})}>
-                            { "+1 to Inning" }
-                        </button>
-                        <button onclick={ctx.link().callback(|_| GameAction{entity: Plyr::Inning, action: Msg::Decrement})}>
-                            { "-1 to Inning" }
-                        </button>
-                    </div>
-
-                    // A button to send the Increment message
-                    <div>
-                        <button class="button" onclick={ctx.link().callback(|_| GameAction{entity: Plyr::Rack, action: Msg::Increment})}>
-                            { "+1 to Rack" }
-                        </button>
-                        <button onclick={ctx.link().callback(|_| GameAction{entity: Plyr::Rack, action: Msg::Decrement})}>
-                            { "-1 to Rack" }
-                        </button>
-                    </div>
-
-                </div>
                 <div class="score_panel">
                     <table style="width:100%">
                         <tr>
@@ -195,11 +143,25 @@ impl Component for App {
                             <td>{self.totals.player2}</td>
                         </tr>
                         <tr>
+                          <td><button class="button" onclick={ctx.link().callback(|_| GameAction{entity: Plyr::Rack, action: Msg::Increment})}>{ "+ R" }</button></td>
+                          <td><button class="button" onclick={ctx.link().callback(|_| GameAction{entity: Plyr::P1, action: Msg::Increment})}>{ "+ P1" }</button></td>
+                          <td><button class="button" onclick={ctx.link().callback(|_| GameAction{entity: Plyr::Inning, action: Msg::Increment})}>{ "+ I" }</button></td>
+                          <td><button class="button" onclick={ctx.link().callback(|_| GameAction{entity: Plyr::Dead, action: Msg::Increment})}>{ "+ D" }</button></td>
+                          <td><button class="button" onclick={ctx.link().callback(|_| GameAction{entity: Plyr::P2, action: Msg::Increment})}>{ "+ P2" }</button></td>
+                        </tr>
+                        <tr>
                             <td>{format!("Rack {0}", self.rack+1)}</td>
                             <td>{self.racks[self.rack].player1}</td>
                             <td>{self.racks[self.rack].innings}</td>
                             <td>{self.racks[self.rack].dead}</td>
                             <td>{self.racks[self.rack].player2}</td>
+                        </tr>
+                        <tr>
+                          <td><button onclick={ctx.link().callback(|_| GameAction{entity: Plyr::Rack, action: Msg::Decrement})}>{ "- R" }</button></td>
+                          <td><button onclick={ctx.link().callback(|_| GameAction{entity: Plyr::P1, action: Msg::Decrement})}>{ "- P1" }</button></td>
+                          <td><button onclick={ctx.link().callback(|_| GameAction{entity: Plyr::Inning, action: Msg::Decrement})}>{ "- I" }</button></td>
+                          <td><button onclick={ctx.link().callback(|_| GameAction{entity: Plyr::Dead, action: Msg::Decrement})}>{ "- D" }</button></td>
+                          <td><button onclick={ctx.link().callback(|_| GameAction{entity: Plyr::P2, action: Msg::Decrement})}>{ "- P2" }</button></td>
                         </tr>
                     </table>
                 </div>

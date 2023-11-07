@@ -1,13 +1,24 @@
-button {
+button  {
     background-color: #008f53; /* Green */
     border: 0;
     color: white;
-    padding: 14px 14px;
     text-align: center;
     font-size: 24px;
     margin: 2px 2px;
-    width: 150px;
+    height: 50px;
+    width: 100px;
   }
+
+button:disabled {
+  background-color: #8f0053; /* Red */
+  border: 0;
+  color: white;
+  padding: 14px 14px;
+  text-align: center;
+  font-size: 24px;
+  margin: 2px 2px;
+  width: 150px;
+}
 
   .counter {
       color: #008f53;
