@@ -2,7 +2,7 @@
   "name": "9 Ball PWA",
   "short_name": "9B",
   "icons": [{
-    "src": "icon-256.png",
+    "src": "./icon-256.png",
     "sizes": "256x256",
     "type": "image/png"
   }],
