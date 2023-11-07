@@ -5,6 +5,19 @@
         <title>Yew App</title>
         <link data-trunk rel="rust" />
         <link data-trunk rel="sass" href="index.scss" />
+        <link rel="manifest" href="manifest.json">
+
+        <script>
+            // register ServiceWorker
+            window.onload = () => {
+                'use strict';
+
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker
+                        .register('service-worker.js');
+                }
+            }
+        </script>
     </head>
     <body></body>
 </html>
