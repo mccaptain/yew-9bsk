@@ -3,7 +3,7 @@ button  {
     border: 0;
     color: white;
     text-align: center;
-    font-size: 24px;
+    font-size: 18px;
     margin: 2px 2px;
     height: 50px;
     width: 100px;
@@ -15,7 +15,7 @@ button:disabled {
   color: white;
   padding: 14px 14px;
   text-align: center;
-  font-size: 24px;
+  font-size: 18px;
   margin: 2px 2px;
   width: 150px;
 }
@@ -42,7 +42,7 @@ button:disabled {
   }
 
 table, th, td {
-  font-size: 24px;
+  font-size: 18px;
   border:1px solid black;
   padding: 10px;
 }
@@ -57,4 +57,14 @@ td {
   table {
     font-size: 12px;
   }
+}
+
+/* Make content area fill the entire browser window */
+html,
+.fullscreen {
+  display: flex;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%;
 }

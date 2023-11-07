@@ -5,8 +5,9 @@
         <title>Yew App</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link data-trunk rel="rust" />
-        <link data-trunk rel="sass" href="index.scss" />
-        <link rel="manifest" href="manifest.json">
+        <link data-trunk rel="sass" href="./index.scss" />
+        <link data-trunk rel="copy-file" href="./manifest.json">
+        <link data-trunk rel="icon" href="./icon-256.png">
 
         <script>
             // register ServiceWorker
@@ -20,5 +21,5 @@
             }
         </script>
     </head>
-    <body></body>
+    <body class="fullscreen"></body>
 </html>
