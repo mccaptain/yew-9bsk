@@ -1,5 +1,6 @@
-use yew::{html, Component, Context, Html};
-use std::cmp;
+mod scorer;
+
+use yew::{html, Component, Context, Html, };
 
 // Define the possible messages which can be sent to the component
 pub enum Msg {
@@ -13,7 +14,9 @@ pub enum Plyr {
     P2,
     Dead,
     Inning,
-    Rack
+    Rack,
+    Level1,
+    Level2
 }
 
 pub struct GameAction {
@@ -22,25 +25,29 @@ pub struct GameAction {
 }
 
 pub struct Rack {
-    player1: i64,
-    player2: i64,
-    dead: i64,
-    innings: i64,
+    player1: u16,
+    player2: u16,
+    dead: u16,
+    innings: u16,
 }
 
 pub struct App {
     rack: usize,
     totals: Rack,
+    player1lvl: u8,
+    player2lvl: u8,
     racks: Vec<Rack>
 }
+
+const MAX_RACKS: usize = 50;
 
 impl Component for App {
     type Message = GameAction;
     type Properties = ();
 
     fn create(_ctx: &Context<Self>) -> Self {
-        let mut racks = Vec::with_capacity(300);
-        for i in 0..300 {
+        let mut racks = Vec::with_capacity(MAX_RACKS);
+        for _i in 0..MAX_RACKS {
             racks.push(Rack{
                 player1: 0,
                 player2: 0,
@@ -48,74 +55,107 @@ impl Component for App {
                 innings: 0,
             });
         }
-        Self { rack: 0, racks, totals: Rack {
-            player1: 0,
-            player2: 0,
-            dead: 0,
-            innings: 0,
-        } }
+        Self {
+            rack: 0,
+            racks,
+            player1lvl: 2,
+            player2lvl: 0,
+            totals: Rack {
+            player1: 0, player2: 0, dead: 0, innings: 0, }
+        }
 
 
     }
 
     fn update(&mut self, _ctx: &Context<Self>, action: Self::Message) -> bool {
-        let current_rack = &mut self.racks[self.rack];
+        let racks = &mut self.racks;
+        let current_rack = &mut racks[self.rack];
         match action {
             GameAction{entity: Plyr::P1, action: Msg::Increment} => {
                 if current_rack.player1 + current_rack.player2 + current_rack.dead < 10 {
                     current_rack.player1 += 1;
+                    self.totals.player1 += 1;
                 }
                 return true;
             }
             GameAction{entity: Plyr::P1, action: Msg::Decrement} => {
                 if current_rack.player1 > 0 {
                     current_rack.player1 -= 1;
+                    self.totals.player1 -= 1;
                 }
                 return true;
             }
             GameAction{entity: Plyr::P2, action: Msg::Increment} => {
                 if current_rack.player1 + current_rack.player2 + current_rack.dead < 10 {
                     current_rack.player2 += 1;
+                    self.totals.player2 += 1;
                 }
                 return true;
             }
             GameAction{entity: Plyr::P2, action: Msg::Decrement} => {
                 if current_rack.player2 > 0 {
                     current_rack.player2 -= 1;
+                    self.totals.player2 -= 1;
                 }
                 return true;
             }
             GameAction{entity: Plyr::Dead, action: Msg::Increment} => {
                 if current_rack.player1 + current_rack.player2 + current_rack.dead < 10 {
                     current_rack.dead += 1;
+                    self.totals.dead += 1;
                 }
                 return true;
             }
             GameAction{entity: Plyr::Dead, action: Msg::Decrement} => {
                 if current_rack.dead > 0 {
                     current_rack.dead -= 1;
+                    self.totals.dead -= 1;
                 }
                 return true;
             }
             GameAction{entity: Plyr::Inning, action: Msg::Increment} => {
                 current_rack.innings += 1;
+                self.totals.innings += 1;
                 return true;
             }
             GameAction{entity: Plyr::Inning, action: Msg::Decrement} => {
                 if current_rack.innings > 0 {
                     current_rack.innings -= 1;
+                    self.totals.innings -= 1;
                 }
                 return true;
             }
             GameAction{entity: Plyr::Rack, action: Msg::Increment} => {
-                self.rack += 1;
-                self.totals = update_totals(&self.racks);
+                if current_rack.player1 + current_rack.player2 + current_rack.dead < 10 {
+                    current_rack.dead = 10 - current_rack.player1 - current_rack.player2;
+                    self.totals.dead += current_rack.dead;
+                }
+                if self.rack < MAX_RACKS-1 {
+                    self.rack += 1;
+                }
                 return true;
             }
             GameAction{entity: Plyr::Rack, action: Msg::Decrement} => {
                 if self.rack > 0 {
                     self.rack -= 1;
-                    self.totals = update_totals(&self.racks);
+                }
+                return true;
+            }
+            GameAction{entity: Plyr::Level1, .. } => {
+                let tmp = self.player1lvl + 1;
+                if tmp > 8 {
+                    self.player1lvl = 0;
+                } else {
+                    self.player1lvl = tmp;
+                }
+                return true;
+            }
+            GameAction{entity: Plyr::Level2, .. } => {
+                let tmp = self.player2lvl + 1;
+                if tmp > 8 {
+                    self.player2lvl = 0;
+                } else {
+                    self.player2lvl = tmp;
                 }
                 return true;
             }
@@ -130,17 +170,21 @@ impl Component for App {
                     <table style="width:100%">
                         <tr>
                             <th/>
-                            <th>{"Player 1"}</th>
+                            <th onclick={ctx.link().callback(|_| GameAction{entity: Plyr::Level1, action: Msg::Increment})}>
+                                {format!("Player 1 SL:{0}", self.player1lvl + 1)}
+                            </th>
                             <th>{"Innings"}</th>
                             <th>{"Dead"}</th>
-                            <th>{"Player 2"}</th>
+                            <th onclick={ctx.link().callback(|_| GameAction{entity: Plyr::Level2, action: Msg::Increment})}>
+                                {format!("Player 2 SL:{0}", self.player2lvl + 1)}
+                            </th>
                         </tr>
                         <tr>
                             <td>{"Totals"}</td>
-                            <td>{self.totals.player1}</td>
+                            <td>{scorer::calc_score(self.totals.player1, self.player1lvl)}</td>
                             <td>{self.totals.innings}</td>
                             <td>{self.totals.dead}</td>
-                            <td>{self.totals.player2}</td>
+                            <td>{scorer::calc_score(self.totals.player2, self.player2lvl)}</td>
                         </tr>
                         <tr>
                           <td><button class="button" onclick={ctx.link().callback(|_| GameAction{entity: Plyr::Rack, action: Msg::Increment})}>{ "+ R" }</button></td>
@@ -169,21 +213,6 @@ impl Component for App {
         }
     }
 }
-
-fn update_totals(racks: &Vec<Rack>) -> Rack {
-    let mut player1: i64 = 0;
-    let mut player2: i64 = 0;
-    let mut innings: i64 = 0;
-    let mut dead: i64 = 0;
-    for i in 0..racks.len() {
-        player1 += racks[i].player1;
-        player2 += racks[i].player2;
-        innings += racks[i].innings;
-        dead += racks[i].dead;
-    }
-    return Rack{ player1, player2, innings, dead }
-}
-
 
 fn main() {
     yew::Renderer::<App>::new().render();
